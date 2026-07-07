@@ -47,5 +47,5 @@ The two posts currently in `src/content/writing/` are **layout samples, `draft: 
 
 - [ ] LinkedIn + X social links (icons parked in the home/about footers until handles confirmed)
 - [ ] About-photo derivative (masters live in the vault: `Attachments/self images/`) — replaces the placeholder slot on `/` and `/about/`
-- [ ] Hero "living still" video treatment (Higgsfield image-to-video pass on the portrait) — CSS ken-burns stands in today
+- [ ] Hero portrait crop: `bottom: -10%` seats the shoulder line below the fold — retune if the portrait art changes (static + mouse-parallax name is the decided treatment; ken-burns/living-still was cut 2026-07-06)
 - [ ] First real posts via `publish-post`

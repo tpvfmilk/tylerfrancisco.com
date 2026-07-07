@@ -130,16 +130,19 @@ import { SITE } from '../lib/site';
   nav.hero-nav .links a { opacity: 0.85; transition: opacity .15s ease; }
   nav.hero-nav .links a:hover { opacity: 1; }
 
-  .bigname { position: absolute; z-index: 1; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  /* name drifts on mouse parallax (--px/--py set from JS); portrait stays put */
+  .bigname { position: absolute; z-index: 1; left: 0; right: 0; top: 50%;
+    transform: translateY(-50%) translate(var(--px, 0px), var(--py, 0px));
+    transition: transform .4s cubic-bezier(.22,.61,.36,1); will-change: transform;
     text-align: center; color: #fff; margin: 0; font-weight: 800; letter-spacing: -0.03em;
     line-height: 0.82; user-select: none; padding: 0 12px; }
   .bigname span { display: block; font-size: clamp(58px, 15vw, 200px); }
 
-  .subject { position: absolute; z-index: 2; bottom: 0; left: 50%; height: 90%; width: auto;
+  /* static cutout — seated low so the shoulder crop line stays below the fold (tune bottom offset per portrait) */
+  .subject { position: absolute; z-index: 2; bottom: -10%; left: 50%; height: 92%; width: auto;
     transform: translateX(-50%); transform-origin: 50% 100%;
-    animation: kenburns 16s ease-in-out infinite; filter: drop-shadow(0 24px 44px rgba(50,10,0,0.45)); }
+    filter: drop-shadow(0 24px 44px rgba(50,10,0,0.45)); }
   .subject img { height: 100%; width: auto; max-width: none; object-fit: contain; display: block; }
-  @keyframes kenburns { 0%,100% { transform: translateX(-50%) scale(1) translateY(0);} 50% { transform: translateX(-50%) scale(1.045) translateY(-1.2%);} }
 
   .kicker { position: absolute; z-index: 5; left: clamp(20px, 4vw, 52px); bottom: clamp(24px, 4vh, 40px);
     color: rgba(255,255,255,0.92); font-size: 12.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
@@ -201,7 +204,28 @@ import { SITE } from '../lib/site';
     .foot-nav { gap: 32px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero, .glow, .subject, .cue .ar { animation: none !important; }
+    .hero, .glow, .cue .ar { animation: none !important; }
     .hero { background-position: 30% 30%; }
   }
 </style>
+
+<script>
+  // mouse parallax — the name drifts opposite the cursor (reads as depth behind the static portrait)
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const bigname = document.querySelector<HTMLElement>('.bigname');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  if (hero && bigname) {
+    hero.addEventListener('mousemove', (e) => {
+      if (calm.matches) return;
+      const r = hero.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5; // -0.5 … 0.5 across the hero
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      bigname.style.setProperty('--px', (nx * -48).toFixed(1) + 'px');
+      bigname.style.setProperty('--py', (ny * -28).toFixed(1) + 'px');
+    });
+    hero.addEventListener('mouseleave', () => {
+      bigname.style.setProperty('--px', '0px');
+      bigname.style.setProperty('--py', '0px');
+    });
+  }
+</script>
