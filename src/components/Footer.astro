@@ -1,0 +1,27 @@
+---
+import { SITE } from '../lib/site';
+
+interface Props {
+  /** The big lowercase word in the footer, e.g. "writing" or "tyler francisco". */
+  word?: string;
+}
+const { word = 'tyler francisco' } = Astro.props;
+---
+
+<div class="wrap">
+  <footer class="site">
+    <p class="big">{word}<span class="dot">.</span></p>
+    <div class="cols">
+      <div>
+        <a href="/writing/">All posts</a>
+        <a href="/writing/guides/">Guides</a>
+        <a href="/writing/?filter=musing">Musings</a>
+      </div>
+      <div>
+        <a href="/rss.xml">RSS</a>
+        <a href="/about/">About</a>
+        <a href={`mailto:${SITE.email}`}>Email</a>
+      </div>
+    </div>
+  </footer>
+</div>

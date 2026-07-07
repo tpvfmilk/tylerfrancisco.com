@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PostCard from '../../components/PostCard.astro';
+import Thumb from '../../components/Thumb.astro';
+import { SITE, formatDate, getPublishedWriting } from '../../lib/site';
+
+const posts = await getPublishedWriting();
+const featured = posts.find((p) => p.data.featured) ?? posts[0];
+const rest = posts.filter((p) => p !== featured);
+---
+
+<Base title={`Writing — ${SITE.title}`} description={SITE.description}>
+  <div class="page wrap">
+    <Header current="writing" />
+
+    <p class="eyebrow">Writing</p>
+    <h1 class="lede">Notes on AI, architecture, and building a second brain.</h1>
+
+    <div class="filters" role="group" aria-label="Filter posts">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="guide" aria-pressed="false">Guides</button>
+      <button class="chip" data-filter="musing" aria-pressed="false">Musings</button>
+    </div>
+
+    {featured && (
+      <section class="featured" aria-label="Featured post">
+        <a class="cardlink" href={`/writing/${featured.id}/`} aria-label={`Read: ${featured.data.title}`}>
+          <span class="thumb">
+            <Thumb
+              seed={featured.id}
+              color={featured.data.thumbColor}
+              pattern={featured.data.thumbPattern}
+              image={featured.data.heroImage}
+            />
+          </span>
+        </a>
+        <div>
+          <span class:list={['tag', featured.data.type]}>{featured.data.type}</span>
+          <h2><a class="titlelink" href={`/writing/${featured.id}/`}>{featured.data.title}</a></h2>
+          <p class="dek">{featured.data.description}</p>
+          <div class="meta">
+            <span class="avatar">TF</span> Tyler Francisco
+            <span class="sep">·</span>
+            <time datetime={featured.data.date.toISOString().slice(0, 10)}>{formatDate(featured.data.date)}</time>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {rest.length > 0 && (
+      <div class="grid" id="grid">
+        {rest.map((post) => <PostCard post={post} />)}
+      </div>
+    )}
+
+    {posts.length === 0 && (
+      <p class="empty">First posts are on the way — the pipeline is warmed up and the idea shelf is filling. Grab the <a href="/rss.xml">RSS feed</a> to catch them when they land.</p>
+    )}
+  </div>
+
+  <Footer word="writing" />
+</Base>
+
+<style>
+  .page { padding-top: 2px; padding-bottom: 40px; }
+
+  .lede { font-size: clamp(28px, 4.4vw, 42px); font-weight: 700; letter-spacing: -0.025em;
+    margin: 0 0 26px; max-width: 18ch; text-wrap: balance; }
+  .filters { display: flex; gap: 8px; margin: 0 0 34px; flex-wrap: wrap; }
+  .chip {
+    font: inherit; font-size: 14px; font-weight: 500;
+    color: var(--muted); background: transparent;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 7px 15px; cursor: pointer; transition: all .15s ease;
+  }
+  .chip:hover { color: var(--text); border-color: var(--muted); }
+  .chip[aria-pressed="true"] { color: #fff; background: var(--accent); border-color: var(--accent); }
+
+  .featured {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(20px, 3vw, 40px);
+    align-items: center; margin-bottom: 56px;
+    padding-bottom: 56px; border-bottom: 1px solid var(--border);
+  }
+  .featured .thumb { aspect-ratio: 16 / 10; }
+  .featured h2 {
+    font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; letter-spacing: -0.025em;
+    line-height: 1.15; margin: 14px 0 12px; text-wrap: balance;
+  }
+  .titlelink { text-decoration: none; color: inherit; transition: color .15s ease; }
+  .titlelink:hover { color: var(--accent); }
+  .featured .dek { font-size: 17px; }
+  a.cardlink { display: block; }
+  a.cardlink .thumb { transition: transform .18s ease; }
+  a.cardlink:hover .thumb { transform: translateY(-3px); }
+
+  .tag {
+    font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .tag.guide { color: var(--accent); background: var(--accent-soft); }
+  .tag.musing { color: var(--muted); background: var(--surface); border: 1px solid var(--border); }
+
+  .dek { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
+  .meta { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); }
+  .avatar {
+    width: 26px; height: 26px; border-radius: 50%; flex: none;
+    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+    display: grid; place-items: center; letter-spacing: 0.02em;
+  }
+  .meta .sep { opacity: 0.5; }
+  .meta time { font-variant-numeric: tabular-nums; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 28px; }
+  .grid :global(article.card.hidden) { display: none; }
+
+  .empty { color: var(--muted); font-size: 17px; max-width: 48ch; }
+  .empty a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .featured { grid-template-columns: 1fr; }
+    .featured .thumb { aspect-ratio: 16 / 9; }
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a.cardlink:hover .thumb { transform: none; }
+  }
+</style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const cards = document.querySelectorAll<HTMLElement>('#grid article.card');
+  const apply = (f: string) => {
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === f)));
+    cards.forEach((card) => card.classList.toggle('hidden', f !== 'all' && card.dataset.type !== f));
+  };
+  chips.forEach((chip) => chip.addEventListener('click', () => apply(chip.dataset.filter ?? 'all')));
+  // deep link: /writing/?filter=musing
+  const preset = new URLSearchParams(location.search).get('filter');
+  if (preset === 'guide' || preset === 'musing') apply(preset);
+</script>

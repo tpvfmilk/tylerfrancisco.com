@@ -1,0 +1,134 @@
+/* ============================================================
+   tylerfrancisco.com — global styles
+   Design system: Arcol structure + Claude palette (beige chrome,
+   clay-orange accent, pastel thumbnail fields). See vault:
+   01 Projects/Website Redo/Design System — Arcol-inspired.md
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+:root {
+  /* chrome — light (default): warm beige + Claude orange */
+  --bg: #ECE6D6;
+  --surface: #F5F0E4;
+  --text: #2A2521;
+  --muted: #6B6357;
+  --border: #D9D0BE;
+  --accent: #D97757;
+  --accent-hover: #C86544;
+  --accent-soft: #EAD3C6;
+  /* thumbnail fields (pastel Arcol set) — thumbnails only, chrome stays orange */
+  --pink: #FF86BC;
+  --yellow: #F2E98A;
+  --cyan: #A6DBF7;
+  --lime: #B2E88F;
+  --violet: #C9B6F9;
+  --coral: #FF9E79;
+  --ink: #17130F;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #211C16; --surface: #2B251D; --text: #F1EADC; --muted: #A99C86;
+    --border: #3B3327; --accent: #E08A6A; --accent-hover: #EE9E80; --accent-soft: #3A2C22;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #ECE6D6; --surface: #F5F0E4; --text: #2A2521; --muted: #6B6357;
+  --border: #D9D0BE; --accent: #D97757; --accent-hover: #C86544; --accent-soft: #EAD3C6;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #211C16; --surface: #2B251D; --text: #F1EADC; --muted: #A99C86;
+  --border: #3B3327; --accent: #E08A6A; --accent-hover: #EE9E80; --accent-soft: #3A2C22;
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+a { color: inherit; }
+img { max-width: 100%; height: auto; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+
+.eyebrow {
+  text-transform: uppercase; letter-spacing: 0.14em; font-size: 12.5px;
+  font-weight: 600; color: var(--accent); margin: 0 0 6px;
+}
+
+/* ---------- site header (writing / about pages) ---------- */
+header.site {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 0 24px;
+}
+.wordmark {
+  font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
+  text-decoration: none;
+}
+.wordmark .dot { color: var(--accent); }
+nav.site { display: flex; gap: 24px; }
+nav.site a {
+  color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: color .15s ease;
+}
+nav.site a:hover, nav.site a[aria-current="page"] { color: var(--text); }
+nav.site a[aria-current="page"] { border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+
+/* ---------- site footer (writing / about pages) ---------- */
+footer.site {
+  margin-top: 84px; padding: 32px 0 90px; border-top: 1px solid var(--border);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 20px;
+}
+footer.site .big {
+  font-size: clamp(40px, 10vw, 96px); font-weight: 800; letter-spacing: -0.04em;
+  line-height: 0.9; color: var(--text); margin: 0;
+}
+footer.site .big .dot { color: var(--accent); }
+footer.site .cols { display: flex; gap: 44px; font-size: 14px; }
+footer.site .cols a { display: block; color: var(--muted); text-decoration: none; margin-bottom: 7px; }
+footer.site .cols a:hover { color: var(--text); }
+
+/* ---------- thumbnails ---------- */
+.thumb {
+  border-radius: 12px; overflow: hidden;
+  background: var(--surface); display: block;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+.thumb svg, .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- code blocks (Shiki dual theme) ---------- */
+.astro-code {
+  border-radius: 10px; padding: 16px 18px; font-size: 14.5px; line-height: 1.6;
+  border: 1px solid var(--border);
+}
+@media (prefers-color-scheme: dark) {
+  .astro-code, .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+/* ---------- a11y + motion ---------- */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+@media (max-width: 560px) {
+  nav.site { gap: 16px; }
+  footer.site { flex-direction: column; align-items: flex-start; }
+}

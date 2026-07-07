@@ -1,0 +1,65 @@
+---
+import Thumb from './Thumb.astro';
+import { formatDate, type Post } from '../lib/site';
+
+interface Props {
+  post: Post;
+  showTag?: boolean;
+}
+const { post, showTag = false } = Astro.props;
+const { title, description, type, date, thumbColor, thumbPattern, heroImage, draft } = post.data;
+---
+
+<article class="card" data-type={type}>
+  <a class="cardlink" href={`/writing/${post.id}/`}>
+    <span class="thumb">
+      <Thumb seed={post.id} color={thumbColor} pattern={thumbPattern} image={heroImage} />
+    </span>
+    <h3>{draft && <span class="draftmark" title="Draft — dev only">draft · </span>}{title}</h3>
+  </a>
+  <p class="dek">{description}</p>
+  {showTag && <span class:list={['tag', type]}>{type}</span>}
+  <div class="meta">
+    <span class="avatar">TF</span> Tyler Francisco
+    <span class="sep">·</span>
+    <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date, true)}</time>
+  </div>
+</article>
+
+<style>
+  article.card { display: flex; flex-direction: column; }
+  a.cardlink { text-decoration: none; color: inherit; display: block; }
+
+  .thumb { aspect-ratio: 4 / 3; }
+  .card h3 {
+    font-size: 19px; font-weight: 650; letter-spacing: -0.015em; line-height: 1.25;
+    margin: 14px 0 7px; text-wrap: balance; transition: color .15s ease;
+  }
+  .draftmark { color: var(--accent); text-transform: uppercase; font-size: 12px; letter-spacing: 0.06em; }
+  a.cardlink:hover h3 { color: var(--accent); }
+  .dek { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
+
+  .tag {
+    align-self: flex-start;
+    font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 9px; border-radius: 6px; margin-bottom: 12px;
+  }
+  .tag.guide { color: var(--accent); background: var(--accent-soft); }
+  .tag.musing { color: var(--muted); background: var(--surface); border: 1px solid var(--border); }
+
+  .meta { display: flex; align-items: center; gap: 8px; margin-top: auto;
+    padding-top: 14px; font-size: 13.5px; color: var(--muted); }
+  .avatar {
+    width: 26px; height: 26px; border-radius: 50%; flex: none;
+    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+    display: grid; place-items: center; letter-spacing: 0.02em;
+  }
+  .meta .sep { opacity: 0.5; }
+  .meta time { font-variant-numeric: tabular-nums; }
+
+  a.cardlink .thumb { transition: transform .18s ease; }
+  a.cardlink:hover .thumb { transform: translateY(-3px); }
+  @media (prefers-reduced-motion: reduce) {
+    a.cardlink:hover .thumb { transform: none; }
+  }
+</style>

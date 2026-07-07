@@ -1,0 +1,59 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { SITE, getPublishedWriting } from '../../../lib/site';
+
+const guides = (await getPublishedWriting()).filter((p) => p.data.type === 'guide');
+
+// curated library, grouped by primary (first) topic
+const groups = new Map<string, typeof guides>();
+for (const g of guides) {
+  const key = g.data.topics[0] ?? 'General';
+  if (!groups.has(key)) groups.set(key, []);
+  groups.get(key)!.push(g);
+}
+---
+
+<Base title={`Guides — ${SITE.title}`} description="Evergreen, field-tested guides on AI in AEC — setup, workflows, and what actually holds up on real projects.">
+  <div class="page wrap">
+    <Header current="writing" />
+
+    <a class="backlink" href="/writing/">‹ All writing</a>
+    <p class="eyebrow">Guides</p>
+    <h1 class="lede">The evergreen library — AI in AEC, tested on real work.</h1>
+
+    {guides.length === 0 && (
+      <p class="empty">The first guides are being written now. The shorter <a href="/writing/">musings stream</a> is where new thinking lands first.</p>
+    )}
+
+    {[...groups.entries()].map(([topic, posts]) => (
+      <section class="group">
+        <h2 class="group-h">{topic}</h2>
+        <div class="grid">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <Footer word="guides" />
+</Base>
+
+<style>
+  .page { padding-top: 2px; padding-bottom: 40px; }
+  .backlink { display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+    text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 26px; transition: color .15s ease; }
+  .backlink:hover { color: var(--accent); }
+  .lede { font-size: clamp(28px, 4.4vw, 42px); font-weight: 700; letter-spacing: -0.025em;
+    margin: 0 0 40px; max-width: 20ch; text-wrap: balance; }
+  .group { margin-bottom: 52px; }
+  .group-h { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 28px; }
+  .empty { color: var(--muted); font-size: 17px; max-width: 48ch; }
+  .empty a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>

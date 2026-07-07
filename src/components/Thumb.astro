@@ -1,0 +1,109 @@
+---
+/**
+ * Arcol-style thumbnail: one pastel field + black abstract line-art.
+ * Deterministic from the post slug so every post gets stable art with zero
+ * manual work; frontmatter thumbColor/thumbPattern override, and a real
+ * heroImage (generated art / photo) wins over the SVG entirely.
+ */
+interface Props {
+  seed: string;
+  color?: 'pink' | 'yellow' | 'cyan' | 'lime' | 'violet' | 'coral';
+  pattern?: 'nodes' | 'chart' | 'branches' | 'target' | 'frame' | 'pipeline';
+  image?: string;
+  alt?: string;
+}
+const { seed, color, pattern, image, alt = '' } = Astro.props;
+
+const COLORS = ['pink', 'yellow', 'cyan', 'lime', 'violet', 'coral'] as const;
+const PATTERNS = ['nodes', 'chart', 'branches', 'target', 'frame', 'pipeline'] as const;
+
+// tiny FNV-ish hash — stable across builds
+let h = 2166136261;
+for (const ch of seed) h = ((h ^ ch.charCodeAt(0)) * 16777619) >>> 0;
+
+const field = color ?? COLORS[h % COLORS.length];
+const art = pattern ?? PATTERNS[(h >>> 3) % PATTERNS.length];
+---
+
+{
+  image ? (
+    <img src={image} alt={alt} loading="lazy" decoding="async" />
+  ) : (
+    <svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" role="img" aria-label={alt || 'Abstract thumbnail'}>
+      <rect width="320" height="240" fill={`var(--${field})`} />
+      {art === 'nodes' && (
+        <>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.4">
+            <circle cx="160" cy="120" r="26" />
+            <circle cx="160" cy="120" r="52" />
+            <circle cx="160" cy="120" r="78" />
+            <path d="M160 120 L58 60 M160 120 L262 60 M160 120 L58 180 M160 120 L262 180 M160 120 L160 38 M160 120 L160 202" />
+          </g>
+          <g fill="var(--ink)">
+            <circle cx="58" cy="60" r="5" /><circle cx="262" cy="60" r="5" />
+            <circle cx="58" cy="180" r="5" /><circle cx="262" cy="180" r="5" />
+            <circle cx="160" cy="38" r="5" /><circle cx="160" cy="202" r="5" />
+          </g>
+          <circle cx="160" cy="120" r="9" fill="var(--ink)" />
+        </>
+      )}
+      {art === 'chart' && (
+        <>
+          <g fill="var(--ink)">
+            <rect x="66" y="150" width="26" height="34" />
+            <rect x="104" y="120" width="26" height="64" />
+            <rect x="142" y="132" width="26" height="52" />
+            <rect x="180" y="92" width="26" height="92" />
+            <rect x="218" y="66" width="26" height="118" />
+          </g>
+          <path d="M66 150 L118 120 L155 132 L193 92 L244 66" fill="none" stroke="var(--ink)" stroke-width="2.6" />
+          <circle cx="244" cy="66" r="6" fill="var(--ink)" />
+        </>
+      )}
+      {art === 'branches' && (
+        <>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.4">
+            <path d="M96 40 V150 M96 92 C96 120 200 96 200 128 V200" />
+            <path d="M200 128 C200 104 152 112 152 84 V60" />
+          </g>
+          <g fill="var(--ink)">
+            <circle cx="96" cy="40" r="9" /><circle cx="96" cy="150" r="9" />
+            <circle cx="200" cy="128" r="9" /><circle cx="200" cy="200" r="9" />
+            <circle cx="152" cy="60" r="9" />
+          </g>
+        </>
+      )}
+      {art === 'target' && (
+        <>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.4">
+            <circle cx="210" cy="96" r="30" /><circle cx="210" cy="96" r="14" />
+            <path d="M60 180 L150 120 M150 120 l-22 2 M150 120 l4 -22" />
+            <path d="M74 96 L120 96 M74 150 L110 150" />
+          </g>
+          <circle cx="210" cy="96" r="5" fill="var(--ink)" />
+        </>
+      )}
+      {art === 'frame' && (
+        <>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.4">
+            <rect x="70" y="54" width="180" height="132" rx="6" />
+            <path d="M70 96 H250 M70 138 H250 M132 54 V186 M194 54 V186" />
+            <path d="M92 118 l18 -20 l16 22 l20 -30 l18 26" />
+          </g>
+          <circle cx="214" cy="72" r="7" fill="var(--ink)" />
+        </>
+      )}
+      {art === 'pipeline' && (
+        <>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round">
+            <circle cx="96" cy="86" r="16" /><circle cx="112" cy="118" r="16" />
+            <path d="M108 78 L150 60 M118 128 L160 146" />
+            <path d="M150 60 C210 40 236 92 210 120 M160 146 C216 168 246 128 220 104" />
+            <rect x="196" y="96" width="60" height="44" rx="5" />
+            <path d="M196 112 H256 M226 96 V140" />
+          </g>
+        </>
+      )}
+    </svg>
+  )
+}

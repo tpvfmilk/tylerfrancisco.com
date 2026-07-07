@@ -1,0 +1,262 @@
+---
+import type { MarkdownHeading } from 'astro';
+import Base from './Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Thumb from '../components/Thumb.astro';
+import { SITE, formatDate, readMinutes, slugifyTopic, type Post } from '../lib/site';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+}
+const { post, headings } = Astro.props;
+const { title, description, type, date, updated, topics, thumbColor, thumbPattern, heroImage, draft } = post.data;
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const minutes = readMinutes(post.body);
+const typeLabel = type === 'guide' ? 'Guide' : 'Musing';
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  ...(updated ? { dateModified: updated.toISOString() } : {}),
+  author: { '@type': 'Person', name: SITE.author, url: SITE.url },
+  mainEntityOfPage: new URL(`/writing/${post.id}/`, SITE.url).href,
+});
+---
+
+<Base title={`${title} — ${SITE.title}`} description={description} ogType="article">
+  <script type="application/ld+json" set:html={jsonLd} slot="head" />
+
+  <Header current="writing" />
+
+  <div class="headband">
+    <div class="wrap">
+      <div class="post-head">
+        <a class="backlink" href="/writing/">‹ All writing</a>
+        <div class="pills">
+          <span class="pill cat">{typeLabel}</span>
+          {topics.map((t) => (
+            <a class="pill attr" href={`/topics/${slugifyTopic(t)}/`}>{t}</a>
+          ))}
+          {draft && <span class="pill draft">Draft — dev only</span>}
+        </div>
+        <h1 class="title">{title}</h1>
+        <div class="byline">
+          <span class="avatar">TF</span> {SITE.author}
+          <span class="sep">·</span>
+          <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time>
+          {updated && (
+            <>
+              <span class="sep">·</span>
+              <span>Updated <time datetime={updated.toISOString().slice(0, 10)}>{formatDate(updated)}</time></span>
+            </>
+          )}
+          <span class="sep">·</span> {minutes} min read
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="layout">
+      <div class="hero-fig">
+        <span class="thumb hero-thumb">
+          <Thumb seed={post.id} color={thumbColor} pattern={thumbPattern} image={heroImage} />
+        </span>
+      </div>
+
+      {toc.length > 0 && (
+        <details class="toc-mobile" id="tocMobile">
+          <summary>On this page</summary>
+          <ol>
+            {toc.map((h) => (
+              <li class:list={{ sub: h.depth === 3 }}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+
+      <article class="post" id="post">
+        <slot />
+
+        <hr class="rule" />
+
+        <div class="cta">
+          <h2>Want more of the playbook?</h2>
+          <p>New guides and shorter musings land here every couple of weeks. No newsletter theatrics — just the work.</p>
+          <a class="btn" href="/writing/">Read more writing</a>
+        </div>
+      </article>
+
+      {toc.length > 0 && (
+        <aside class="toc-rail">
+          <nav class="toc" aria-label="On this page">
+            <p class="toc-h">On this page</p>
+            <ol>
+              {toc.map((h) => (
+                <li class:list={{ sub: h.depth === 3 }}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </aside>
+      )}
+    </div>
+  </div>
+
+  <Footer word="writing" />
+</Base>
+
+<style>
+  /* faint technical grid behind the title band — Arcol nod + the AEC subject */
+  .headband { position: relative; border-top: 1px solid var(--border); }
+  .headband::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 44px 44px; opacity: 0.35;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 78%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 78%);
+  }
+  .post-head { position: relative; display: grid; grid-template-columns: minmax(0, 700px) 220px;
+    gap: 0 clamp(40px, 5vw, 72px); justify-content: center; padding: 40px 0 8px; }
+  .post-head > * { grid-column: 1; }
+  .backlink { display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+    text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 22px;
+    justify-self: start; transition: color .15s ease; }
+  .backlink:hover { color: var(--accent); }
+  h1.title {
+    font-size: clamp(30px, 5vw, 50px); font-weight: 750; letter-spacing: -0.03em;
+    line-height: 1.08; margin: 0 0 20px; max-width: 20ch; text-wrap: balance;
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .pill { font-size: 12.5px; font-weight: 600; padding: 4px 11px; border-radius: 999px;
+    letter-spacing: 0.02em; text-decoration: none; }
+  .pill.cat { color: #fff; background: var(--accent); }
+  .pill.attr { color: var(--muted); background: var(--surface); border: 1px solid var(--border);
+    transition: color .15s ease, border-color .15s ease; }
+  .pill.attr:hover { color: var(--text); border-color: var(--muted); }
+  .pill.draft { color: #fff; background: var(--muted); }
+  .byline { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; font-size: 14.5px;
+    color: var(--muted); padding-bottom: 36px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; flex: none; background: var(--accent);
+    color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+  .byline .sep { opacity: 0.5; }
+  .byline time { font-variant-numeric: tabular-nums; }
+
+  /* reading column + "on this page" rail */
+  .layout { display: grid; grid-template-columns: minmax(0, 700px) 220px;
+    gap: 0 clamp(40px, 5vw, 72px); justify-content: center; align-items: start; }
+
+  .hero-fig { grid-column: 1 / -1; margin: 0 0 52px; }
+  .hero-thumb { aspect-ratio: 16 / 8; border-radius: 14px; }
+
+  article.post { grid-column: 1; max-width: 700px; padding-bottom: 20px; min-width: 0; }
+
+  .toc-rail { grid-column: 2; align-self: start; position: sticky; top: 28px; }
+  .toc-h { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 12px; }
+  .toc ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--border); }
+  .toc a { display: block; padding: 6px 0 6px 14px; margin-left: -2px; border-left: 2px solid transparent;
+    color: var(--muted); text-decoration: none; font-size: 13.5px; line-height: 1.45;
+    transition: color .15s ease, border-color .15s ease; }
+  .toc a:hover { color: var(--text); }
+  .toc a[aria-current="true"] { color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+  .toc li.sub a { padding-left: 28px; font-size: 13px; }
+
+  .toc-mobile { display: none; grid-column: 1; margin: 0 0 36px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+  .toc-mobile summary { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 16px; cursor: pointer; font-size: 14px; font-weight: 600; list-style: none; }
+  .toc-mobile summary::-webkit-details-marker { display: none; }
+  .toc-mobile summary::after { content: "▾"; color: var(--muted); transition: transform .15s ease; }
+  .toc-mobile[open] summary::after { transform: rotate(180deg); }
+  .toc-mobile ol { list-style: none; margin: 0; padding: 4px 16px 12px; }
+  .toc-mobile a { display: block; padding: 7px 0; color: var(--muted); text-decoration: none; font-size: 14px; }
+  .toc-mobile a[aria-current="true"] { color: var(--accent); font-weight: 600; }
+  .toc-mobile li.sub a { padding-left: 14px; }
+
+  /* article typography — targets rendered Markdown */
+  article.post :global(h2), article.post :global(h3) { scroll-margin-top: 24px; }
+  article.post :global(p) { font-size: 17.5px; line-height: 1.75; margin: 0 0 22px; }
+  article.post :global(p:first-child) { font-size: 21px; line-height: 1.6; margin-bottom: 30px; }
+  article.post :global(h2) {
+    font-size: clamp(22px, 3vw, 27px); font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1.2; margin: 46px 0 14px; text-wrap: balance;
+  }
+  article.post :global(h3) {
+    font-size: 19px; font-weight: 650; letter-spacing: -0.015em; margin: 36px 0 12px;
+  }
+  article.post :global(a) { color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft); }
+  article.post :global(a:hover) { border-bottom-color: var(--accent); }
+  article.post :global(ul), article.post :global(ol) { margin: 0 0 22px; padding-left: 22px; }
+  article.post :global(li) { font-size: 17.5px; line-height: 1.7; margin-bottom: 9px; }
+  article.post :global(li::marker) { color: var(--accent); }
+  article.post :global(strong) { font-weight: 650; }
+  article.post :global(blockquote) {
+    margin: 34px 0; padding: 2px 0 2px 24px; border-left: 3px solid var(--accent);
+    font-size: 21px; font-weight: 550; line-height: 1.42; letter-spacing: -0.01em;
+  }
+  article.post :global(blockquote p) { font-size: inherit; line-height: inherit; margin: 0; }
+  article.post :global(blockquote cite) { display: block; margin-top: 12px; font-size: 15px;
+    font-weight: 500; font-style: normal; color: var(--muted); }
+  article.post :global(img) { border-radius: 12px; }
+  article.post :global(figure) { margin: 44px 0; }
+  article.post :global(figcaption) { margin-top: 12px; font-size: 13.5px; color: var(--muted); text-align: center; }
+  article.post :global(code:not(.astro-code code)) {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+    padding: 1px 6px; font-size: 15px;
+  }
+  article.post :global(.astro-code) { margin: 0 0 22px; }
+  article.post :global(hr) { border: none; border-top: 1px solid var(--border); margin: 46px 0; }
+
+  hr.rule { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  .cta { text-align: center; }
+  .cta h2 { font-size: clamp(24px, 3.4vw, 30px); font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 10px; text-wrap: balance; }
+  .cta p { color: var(--muted); font-size: 16px; margin: 0 0 22px; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+    font-weight: 600; font-size: 15px; padding: 12px 22px; border-radius: 9px; transition: background .15s ease; }
+  .btn:hover { background: var(--accent-hover); }
+
+  @media (max-width: 1020px) {
+    .post-head, .layout { grid-template-columns: minmax(0, 700px); }
+    .toc-rail { display: none; }
+    .toc-mobile { display: block; }
+  }
+</style>
+
+<script>
+  // scrollspy — active section = last heading above the 24%-viewport line
+  const post = document.getElementById('post');
+  const heads = post ? Array.from(post.querySelectorAll('h2[id], h3[id]')) : [];
+  const tocLinks = Array.from(document.querySelectorAll('.toc a, .toc-mobile a')) as HTMLAnchorElement[];
+  if (heads.length && tocLinks.length) {
+    const setActive = (id: string) =>
+      tocLinks.forEach((a) => a.setAttribute('aria-current', a.hash === '#' + id ? 'true' : 'false'));
+    const spyUpdate = () => {
+      let current = heads[0].id;
+      const line = window.innerHeight * 0.24;
+      heads.forEach((h) => { if (h.getBoundingClientRect().top <= line) current = h.id; });
+      setActive(current);
+    };
+    addEventListener('scroll', spyUpdate, { passive: true });
+    spyUpdate();
+  }
+  // mobile disclosure closes after a jump
+  const mob = document.getElementById('tocMobile');
+  mob?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) mob.removeAttribute('open');
+  });
+</script>

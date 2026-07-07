@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PostCard from '../../components/PostCard.astro';
+import { SITE, getPublishedWriting, slugifyTopic } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedWriting();
+  const topics = new Map<string, { label: string; posts: typeof posts }>();
+  for (const post of posts) {
+    for (const t of post.data.topics) {
+      const tag = slugifyTopic(t);
+      if (!topics.has(tag)) topics.set(tag, { label: t, posts: [] });
+      topics.get(tag)!.posts.push(post);
+    }
+  }
+  return [...topics.entries()].map(([tag, { label, posts }]) => ({
+    params: { tag },
+    props: { label, posts },
+  }));
+}
+
+const { label, posts } = Astro.props;
+---
+
+<Base title={`${label} — ${SITE.title}`} description={`Guides and musings on ${label}.`}>
+  <div class="page wrap">
+    <Header current="writing" />
+
+    <a class="backlink" href="/writing/">‹ All writing</a>
+    <p class="eyebrow">Topic</p>
+    <h1 class="lede">{label}</h1>
+    <p class="count">{posts.length} {posts.length === 1 ? 'post' : 'posts'} — guides and musings.</p>
+
+    <div class="grid">
+      {posts.map((post) => <PostCard post={post} showTag />)}
+    </div>
+  </div>
+
+  <Footer word="writing" />
+</Base>
+
+<style>
+  .page { padding-top: 2px; padding-bottom: 40px; }
+  .backlink { display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+    text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 26px; transition: color .15s ease; }
+  .backlink:hover { color: var(--accent); }
+  .lede { font-size: clamp(28px, 4.4vw, 42px); font-weight: 700; letter-spacing: -0.025em;
+    margin: 0 0 10px; text-wrap: balance; }
+  .count { color: var(--muted); margin: 0 0 36px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 28px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>
