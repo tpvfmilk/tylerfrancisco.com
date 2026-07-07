@@ -42,19 +42,8 @@ import { SITE } from '../lib/site';
         </ul>
       </div>
 
-      <!-- second portrait slot (about photo) -->
-      <div class="portrait" role="img" aria-label="Portrait placeholder">
-        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
-          <rect width="400" height="500" fill="var(--surface)"/>
-          <g fill="none" stroke="var(--border)" stroke-width="1">
-            <path d="M0 40 H400 M0 80 H400 M0 120 H400 M0 160 H400 M0 200 H400 M0 240 H400 M0 280 H400 M0 320 H400 M0 360 H400 M0 400 H400 M0 440 H400 M40 0 V500 M80 0 V500 M120 0 V500 M160 0 V500 M200 0 V500 M240 0 V500 M280 0 V500 M320 0 V500 M360 0 V500"/>
-          </g>
-          <g fill="var(--border)">
-            <circle cx="200" cy="205" r="66"/>
-            <path d="M104 500 C 104 396 148 350 200 350 C 252 350 296 396 296 500 Z"/>
-          </g>
-        </svg>
-        <span class="cap">about photo — coming soon</span>
+      <div class="portrait">
+        <img src="/images/about-portrait.webp" alt="Tyler Francisco seated on the steps of a columned building — aloha shirt, sunglasses" loading="lazy" decoding="async" width="880" height="1100" />
       </div>
     </div>
   </section>
@@ -166,9 +155,7 @@ import { SITE } from '../lib/site';
 
   .portrait { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface);
     border: 1px solid var(--border); aspect-ratio: 4/5; box-shadow: 0 20px 40px -30px rgba(23,19,15,0.5); }
-  .portrait svg { width: 100%; height: 100%; display: block; }
-  .portrait .cap { position: absolute; left: 12px; bottom: 12px; background: rgba(20,8,2,0.30); color: #fff;
-    border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 5px 11px; font-size: 11px; backdrop-filter: blur(3px); }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   /* ============ FOOTER ============ */
   .home-foot { border-top: 1px solid var(--border); padding: clamp(48px,7vw,84px) 0 46px; }
