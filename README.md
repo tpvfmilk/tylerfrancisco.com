@@ -48,6 +48,6 @@ Live since 2026-07-06: push to `main` → `.github/workflows/deploy.yml` → Git
 ## Still to wire
 
 - [ ] LinkedIn + X social links (icons parked in the home/about footers until handles confirmed)
-- [x] ~~About-photo derivative~~ — `/images/about-portrait.webp` (IMG_8502 crop, 880×1100 WebP) on `/about/`; the home about-section slot is **deliberately blank** (Tyler 2026-07-06)
+- [x] ~~About photo~~ — **cut by decision** (Tyler 2026-07-06): the home hero cutout is the site's only photo; both about-section portrait slots stay blank. (Masters remain in the vault at `Attachments/self images/` if this ever reverses — the derivative was one `sharp` extract/resize, see git history at `ba79c9a`.)
 - [ ] Hero portrait crop: `bottom: -10%` seats the shoulder line below the fold — retune if the portrait art changes (static + mouse-parallax name is the decided treatment; ken-burns/living-still was cut 2026-07-06)
 - [ ] First real posts via `publish-post`
