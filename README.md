@@ -36,12 +36,14 @@ Thumbnails are deterministic SVGs from the slug unless overridden — every post
 
 The two posts currently in `src/content/writing/` are **layout samples, `draft: true`** — they render in dev for template work and never build. Replace with real posts via the pipeline.
 
-## Deploy (one-time setup)
+## Deploy
 
-1. Create the public GitHub repo (e.g. `tpvfmilk/tylerfrancisco.com`) and push `main`.
-2. Repo **Settings → Pages → Source: GitHub Actions**. Every push to `main` then deploys via `.github/workflows/deploy.yml`.
-3. Custom domain: **Settings → Pages → Custom domain → `tylerfrancisco.com`** (the `public/CNAME` file matches). At the registrar (currently PDR via StableHost), point A records to GitHub Pages IPs (185.199.108–111.153) + `www` CNAME to `tpvfmilk.github.io`. Until DNS cuts over, the `*.github.io` URL will show broken styles — expected, since the site builds against the custom domain.
-4. After the new site is live on the domain: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install.
+Live since 2026-07-06: push to `main` → `.github/workflows/deploy.yml` → GitHub Pages (`build_type: workflow`). Current serving URL: <https://tpvfmilk.github.io/tylerfrancisco.com/> — **styles are broken there on purpose** (root-relative assets; the site builds against the custom domain).
+
+**Remaining cutover steps (last, once real content has shipped):**
+
+1. Custom domain: **Settings → Pages → Custom domain → `tylerfrancisco.com`** (the `public/CNAME` file matches). At the registrar (currently PDR via StableHost), point A records to GitHub Pages IPs (185.199.108–111.153) + `www` CNAME to `tpvfmilk.github.io`.
+2. After the new site is live on the domain: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install.
 
 ## Still to wire
 
