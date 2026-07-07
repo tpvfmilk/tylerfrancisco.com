@@ -42,9 +42,7 @@ import { SITE } from '../lib/site';
         </ul>
       </div>
 
-      <div class="portrait">
-        <img src="/images/about-portrait.webp" alt="Tyler Francisco seated on the steps of a columned building — aloha shirt, sunglasses" loading="lazy" decoding="async" width="880" height="1100" />
-      </div>
+      <!-- second portrait slot deliberately blank (Tyler 2026-07-06) — grid keeps the column so the text measure holds -->
     </div>
   </section>
 
@@ -153,10 +151,6 @@ import { SITE } from '../lib/site';
     background: var(--accent-soft); padding: 3px 8px; border-radius: 5px; flex: none; }
   .currently b { color: var(--text); font-weight: 600; }
 
-  .portrait { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface);
-    border: 1px solid var(--border); aspect-ratio: 4/5; box-shadow: 0 20px 40px -30px rgba(23,19,15,0.5); }
-  .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
   /* ============ FOOTER ============ */
   .home-foot { border-top: 1px solid var(--border); padding: clamp(48px,7vw,84px) 0 46px; }
   .foot-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
@@ -183,7 +177,6 @@ import { SITE } from '../lib/site';
 
   @media (max-width: 820px) {
     .about-grid { grid-template-columns: 1fr; }
-    .portrait { max-width: 360px; }
     nav.hero-nav .links { gap: 18px; }
   }
   @media (max-width: 560px) {
