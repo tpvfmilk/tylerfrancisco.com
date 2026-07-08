@@ -38,15 +38,11 @@ The two posts currently in `src/content/writing/` are **layout samples, `draft: 
 
 ## Deploy
 
-Live since 2026-07-06: push to `main` → `.github/workflows/deploy.yml` → GitHub Pages (`build_type: workflow`). Current serving URL: <https://tpvfmilk.github.io/tylerfrancisco.com/> — **styles are broken there on purpose** (root-relative assets; the site builds against the custom domain).
+Push to `main` → `.github/workflows/deploy.yml` → GitHub Pages (`build_type: workflow`). Serves at **<https://tylerfrancisco.com>** (custom domain + enforced HTTPS since 2026-07-08); `www` and the old `tpvfmilk.github.io/tylerfrancisco.com/` URL both 301 to the apex.
 
-**Cutover in progress (started 2026-07-08):**
+**Cutover completed 2026-07-08:** custom domain set via Pages API; DNS re-homed — registrar **NearlyFreeSpeech.NET**, zone on NFSN nameservers (`ns.phx5`/`ns.phx7`, apex A ×4 → GitHub Pages IPs, `www` CNAME → `tpvfmilk.github.io`, no MX/CAA); the retiring StableHost zone was updated to matching records for a seamless NS-propagation tail; Let's Encrypt cert issued + `https_enforced` on the same day.
 
-1. ~~Custom domain on GitHub~~ — **done 2026-07-08** via Pages API (`cname: tylerfrancisco.com`; the `public/CNAME` file matches). Note `https_enforced` resets to false when the domain is added — re-enable after DNS lands and the cert provisions.
-2. DNS — registrar is **NearlyFreeSpeech.NET**; the zone currently lives on StableHost's ns1/ns2 (StableHost is DNS + old hosting only). Two panels, either or both:
-   - **StableHost cPanel → Zone Editor** (instant cutover, zone TTL ~1h): replace the apex A record (was `213.109.149.41`) with the four GitHub Pages IPs (185.199.108.153 / 109.153 / 110.153 / 111.153); replace the `www` CNAME (was StableHost's Cloudflare CDN) with `tpvfmilk.github.io`.
-   - **NFSN member portal** (permanent home — kills the teardown blocker): enable NFSN DNS for the domain (free with registration), add the same records (apex A ×4, `www` CNAME → `tpvfmilk.github.io`, no MX), then switch the domain's nameservers from ns1/ns2.stablehost.com to the NFSN set their UI shows. NS delegation tail can run ~24–48h — seamless as long as both zones hold identical records.
-3. After the site is live on the domain **and the NS switch to NFSN has propagated**: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install — with DNS at NFSN, nothing references StableHost anymore. (Leave MX out of the new zone: @tylerfrancisco.com mail was never set up; the old zone's MX was a cPanel default pointing at the apex.)
+**Remaining teardown (any time after the NS switch has fully propagated, ~24–48h from 2026-07-08):** cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install — DNS lives at NFSN now, so nothing references StableHost. (Keep MX out of the NFSN zone: @tylerfrancisco.com mail was never set up; the old zone's MX was a cPanel default pointing at the apex.)
 
 ## Still to wire
 
