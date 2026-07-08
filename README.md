@@ -43,8 +43,10 @@ Live since 2026-07-06: push to `main` → `.github/workflows/deploy.yml` → Git
 **Cutover in progress (started 2026-07-08):**
 
 1. ~~Custom domain on GitHub~~ — **done 2026-07-08** via Pages API (`cname: tylerfrancisco.com`; the `public/CNAME` file matches). Note `https_enforced` resets to false when the domain is added — re-enable after DNS lands and the cert provisions.
-2. DNS — in the **StableHost panel** (the zone lives on ns1/ns2.stablehost.com, not at the PDR registrar): replace the apex A record (was `213.109.149.41`) with the four GitHub Pages IPs (185.199.108.153 / 109.153 / 110.153 / 111.153) + replace the `www` CNAME (was StableHost's Cloudflare CDN) with `tpvfmilk.github.io`. Zone TTL ~1h.
-3. After the new site is live on the domain: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install. **⚠ Move DNS off StableHost first** — the nameservers are theirs, so canceling hosting kills the whole DNS zone. Re-home the zone (PDR registrar DNS or Cloudflare) before cancellation. The MX record also points at the apex (cPanel default, no known mailboxes) — drop it at teardown unless @tylerfrancisco.com mail ever gets set up.
+2. DNS — registrar is **NearlyFreeSpeech.NET**; the zone currently lives on StableHost's ns1/ns2 (StableHost is DNS + old hosting only). Two panels, either or both:
+   - **StableHost cPanel → Zone Editor** (instant cutover, zone TTL ~1h): replace the apex A record (was `213.109.149.41`) with the four GitHub Pages IPs (185.199.108.153 / 109.153 / 110.153 / 111.153); replace the `www` CNAME (was StableHost's Cloudflare CDN) with `tpvfmilk.github.io`.
+   - **NFSN member portal** (permanent home — kills the teardown blocker): enable NFSN DNS for the domain (free with registration), add the same records (apex A ×4, `www` CNAME → `tpvfmilk.github.io`, no MX), then switch the domain's nameservers from ns1/ns2.stablehost.com to the NFSN set their UI shows. NS delegation tail can run ~24–48h — seamless as long as both zones hold identical records.
+3. After the site is live on the domain **and the NS switch to NFSN has propagated**: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install — with DNS at NFSN, nothing references StableHost anymore. (Leave MX out of the new zone: @tylerfrancisco.com mail was never set up; the old zone's MX was a cPanel default pointing at the apex.)
 
 ## Still to wire
 
