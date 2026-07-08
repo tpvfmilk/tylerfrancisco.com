@@ -6,7 +6,6 @@ export const SITE = {
     'Notes on AI, architecture, and building a second brain — field-tested guides on AI in AEC, plus shorter musings.',
   url: 'https://tylerfrancisco.com',
   author: 'Tyler Francisco',
-  email: 'tpvfmilk@users.noreply.github.com',
 } as const;
 
 export type Post = CollectionEntry<'writing'>;

@@ -1,6 +1,4 @@
 ---
-import { SITE } from '../lib/site';
-
 interface Props {
   /** The big lowercase word in the footer, e.g. "writing" or "tyler francisco". */
   word?: string;
@@ -20,7 +18,6 @@ const { word = 'tyler francisco' } = Astro.props;
       <div>
         <a href="/rss.xml">RSS</a>
         <a href="/about/">About</a>
-        <a href={`mailto:${SITE.email}`}>Email</a>
       </div>
     </div>
   </footer>
