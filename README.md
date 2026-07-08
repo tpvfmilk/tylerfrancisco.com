@@ -40,10 +40,11 @@ The two posts currently in `src/content/writing/` are **layout samples, `draft: 
 
 Live since 2026-07-06: push to `main` → `.github/workflows/deploy.yml` → GitHub Pages (`build_type: workflow`). Current serving URL: <https://tpvfmilk.github.io/tylerfrancisco.com/> — **styles are broken there on purpose** (root-relative assets; the site builds against the custom domain).
 
-**Remaining cutover steps (last, once real content has shipped):**
+**Cutover in progress (started 2026-07-08):**
 
-1. Custom domain: **Settings → Pages → Custom domain → `tylerfrancisco.com`** (the `public/CNAME` file matches). At the registrar (currently PDR via StableHost), point A records to GitHub Pages IPs (185.199.108–111.153) + `www` CNAME to `tpvfmilk.github.io`.
-2. After the new site is live on the domain: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install.
+1. ~~Custom domain on GitHub~~ — **done 2026-07-08** via Pages API (`cname: tylerfrancisco.com`; the `public/CNAME` file matches). Note `https_enforced` resets to false when the domain is added — re-enable after DNS lands and the cert provisions.
+2. DNS — in the **StableHost panel** (the zone lives on ns1/ns2.stablehost.com, not at the PDR registrar): replace the apex A record (was `213.109.149.41`) with the four GitHub Pages IPs (185.199.108.153 / 109.153 / 110.153 / 111.153) + replace the `www` CNAME (was StableHost's Cloudflare CDN) with `tpvfmilk.github.io`. Zone TTL ~1h.
+3. After the new site is live on the domain: cancel StableHost hosting (paid through May 2027) and tear down the old WordPress install. **⚠ Move DNS off StableHost first** — the nameservers are theirs, so canceling hosting kills the whole DNS zone. Re-home the zone (PDR registrar DNS or Cloudflare) before cancellation. The MX record also points at the apex (cPanel default, no known mailboxes) — drop it at teardown unless @tylerfrancisco.com mail ever gets set up.
 
 ## Still to wire
 
