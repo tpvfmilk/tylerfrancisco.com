@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { SITE } from '../lib/site';
 ---
 
-<Base title={`About — ${SITE.title}`} description="Tyler Francisco — technical designer in Honolulu, de-facto AI & automation champion at an architecture firm, and keeper of a plain-text second brain.">
+<Base title={`About — ${SITE.title}`} description="Tyler Francisco — technical designer at an architecture firm in Honolulu, working on AI governance, security reviews, training, and the workflows people actually use.">
   <Header current="about" />
 
   <div class="wrap">
@@ -14,21 +14,44 @@ import { SITE } from '../lib/site';
         <div>
           <p class="eyebrow">About</p>
           <h1>I make architecture move faster with AI — and write down what actually works.</h1>
-          <p>I'm Tyler, a technical designer at an architecture firm in Honolulu, where I ended up as the de-facto AI &amp; automation champion mostly by being the one who kept trying things. My day job is buildings; my obsession is the systems around them — the boring, reliable workflows that quietly remove the busywork so the design work gets more room.</p>
-          <p class="soft">Off the clock I run a couple of small businesses, keep a second brain that lives entirely in plain text and Git, and get overruled daily by a dachshund named Soondae. This site is where I think out loud about all of it.</p>
-          <ul class="currently">
-            <li><span class="lab">Now</span> <span>Building an <b>AI daily brief</b> and a <b>cost-trends database</b> that maintains itself.</span></li>
-            <li><span class="lab">Ethos</span> <span>Lowest autonomy that works. <b>Eliminate → automate → delegate.</b> Boring is beautiful.</span></li>
-            <li><span class="lab">Writing</span> <span>Field-tested <b>guides on AI in AEC</b>, plus shorter musings.</span></li>
-          </ul>
 
-          <div class="contact">
+          <div class="sec first">
+            <p class="eyebrow">who I am</p>
+            <h2>the seat I work from</h2>
+            <p>I'm a technical designer at an architecture firm in Honolulu. My job on the AI side is practical. I write the rules for how we use it safely, check the security side, train the team, and build the workflows people actually use day to day. When a tool fails, it fails on a real project with a real deadline. That's the experience I bring when I consult.</p>
+            <p class="soft">I'll be upfront about the limits too. Everything I know comes from seeing one mid-size firm from the inside. Part of any job is finding out what holds true at yours.</p>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">principles</p>
+            <h2>working beliefs</h2>
+            <ul class="rules">
+              <li><span class="lab">01</span> <span><b>Lowest autonomy that works.</b> Give AI the least freedom it needs to do the job. Start read-only. Keep an off switch.</span></li>
+              <li><span class="lab">02</span> <span><b>Eliminate, automate, delegate. In that order.</b> Before you automate a task, ask if you can just delete it.</span></li>
+              <li><span class="lab">03</span> <span><b>Pilot on a measured number.</b> Test small, measure the result, and decide with your own numbers, not the vendor's slides.</span></li>
+              <li><span class="lab">04</span> <span><b>Boring is beautiful.</b> Steady workflows beat clever agents. If it needs babysitting, it isn't done.</span></li>
+            </ul>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">the writing</p>
+            <h2>where I show my work</h2>
+            <p>Everything I write comes back to one idea. AI is making drawings and documents cheap to produce. It is not making judgment cheap, because judgment is what someone signs their name to. Guides are step-by-step and meant to last. Musings are short takes with a date on them. Real work, real numbers, real failures.</p>
+            <p class="soft">One disclaimer. Everything here is what I believed on the day I wrote it. In this industry, opinions go stale about as fast as Anthropic and OpenAI ship new models. When my mind changes, I say so instead of quietly editing the past.</p>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">off the clock</p>
+            <p class="soft">Outside of work I run a couple of small side businesses, keep a second brain made of plain text files and git, and get overruled daily by a dachshund named Soondae.</p>
+          </div>
+
+          <div class="sec">
             <p class="eyebrow">Contact</p>
             <div class="socials">
               <a href="https://www.instagram.com/t_francisco" aria-label="Instagram" title="Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
               </a>
-              <!-- email + GitHub links removed by decision (Tyler 2026-07-08) -->
+              <!-- email + GitHub removed 2026-07-08; email + LinkedIn declined again with the 2026-07-09 rewrite — Instagram only (Tyler) -->
             </div>
           </div>
         </div>
@@ -44,20 +67,22 @@ import { SITE } from '../lib/site';
 <style>
   .about { padding: clamp(24px, 5vw, 64px) 0 clamp(40px, 7vw, 96px); }
   .about-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(32px, 6vw, 80px); align-items: start; }
-  .about h1 { font-size: clamp(28px, 4.4vw, 44px); font-weight: 750; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 22px; text-wrap: balance; }
-  .about p { font-size: 17.5px; line-height: 1.7; color: var(--text); margin: 0 0 18px; max-width: 54ch; }
+  .about h1 { font-size: clamp(28px, 4.4vw, 44px); font-weight: 750; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 10px; text-wrap: balance; }
+  .about p:not(.eyebrow) { font-size: 17px; line-height: 1.7; color: var(--text); margin: 0 0 16px; max-width: 58ch; }
   .about p.soft { color: var(--muted); }
-  .currently { margin: 26px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .currently li { display: flex; align-items: baseline; gap: 12px; font-size: 15.5px; color: var(--muted); }
-  .currently .lab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
-    background: var(--accent-soft); padding: 3px 8px; border-radius: 5px; flex: none; }
-  .currently b { color: var(--text); font-weight: 600; }
+  .about p.eyebrow { margin: 0 0 8px; }
 
-  .contact { margin-top: 44px; padding-top: 34px; border-top: 1px solid var(--border); }
-  .contact .eyebrow { margin-bottom: 12px; }
-  a.mail { color: var(--accent); text-decoration: none; font-size: 17px; font-weight: 600; border-bottom: 1px solid var(--accent-soft); }
-  a.mail:hover { border-bottom-color: var(--accent); }
-  .socials { display: flex; gap: 12px; margin-top: 22px; }
+  .sec { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--border); }
+  .sec.first { border-top: none; padding-top: 18px; margin-top: 0; }
+  .sec h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .sec > p:last-child { margin-bottom: 0; }
+
+  .rules { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .rules li { display: flex; align-items: baseline; gap: 12px; font-size: 15.5px; line-height: 1.6; color: var(--muted); }
+  .rules .lab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); background: var(--accent-soft); padding: 3px 8px; border-radius: 5px; flex: none; }
+  .rules b { color: var(--text); font-weight: 600; }
+
+  .socials { display: flex; gap: 12px; margin-top: 6px; }
   .socials a { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); color: var(--muted);
     display: grid; place-items: center; transition: all .15s ease; }
   .socials a:hover { color: #fff; background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
